@@ -3,10 +3,17 @@ param (
     [string] $nugetExePath,
     [string] $nugetExeUrl
 )
+
+trap
+{
+    Write-Error $_.Exception
+    exit 1
+}
+
 if (Test-Path $nugetExePath) 
 {
     Write-Output "Found '$nugetExePath'"
-    return
+    exit 0
 }
 
 if(!$nugetExeUrl) {
@@ -15,3 +22,4 @@ if(!$nugetExeUrl) {
 
 Write-Output "Download nuget.exe from '$nugetExeUrl'"
 Invoke-WebRequest -Uri $nugetExeUrl -OutFile $nugetExePath
+exit 0
