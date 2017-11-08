@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <Authors>Codestellation Team</Authors>
+    <Company>Codestellation</Company>
+    <Description>ASP.NET core 2.0 logging middleware</Description>
+    <Copyright>Copyright (c) Codestellation 2017</Copyright>
+    <PackageId>Codestellation.AspNetCore.Logging</PackageId>
+    <PackageProjectUrl>https://github.com/codestellation/aspnetcore.logging</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/codestellation/aspnetcore.logging</RepositoryUrl>
+    <AssemblyName>Codestellation.AspNetCore.Logging</AssemblyName>
+    <RootNamespace>Codestellation.AspNetCore.Logging</RootNamespace>
+    <NoWarn>7035</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath Condition="$(OutputPath) == ''">..\..\build\bin</OutputPath>
+    <OutDir>$(OutputPath)\$(MSBuildProjectName)\$(TargetFramework)\</OutDir>
+  </PropertyGroup>
+
+</Project>
