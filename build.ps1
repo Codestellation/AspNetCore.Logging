@@ -23,7 +23,7 @@ if ($lastExitCode -ne 0) {
 }
 
 # Restore tools from NuGet
-& $nugetExe install "Codestellation.Nova.CakeBuild" -excludeVersion -outputDirectory $packagesDir
+& $nugetExe install "Codestellation.Nova.CakeBuild" -version 1.0.3 -excludeVersion -outputDirectory $packagesDir
 if ($lastExitCode -ne 0) {
     exit $lastExitCode
 }

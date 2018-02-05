@@ -12,6 +12,8 @@
     <AssemblyName>Codestellation.AspNetCore.Logging</AssemblyName>
     <RootNamespace>Codestellation.AspNetCore.Logging</RootNamespace>
     <NoWarn>7035</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <PropertyGroup>
