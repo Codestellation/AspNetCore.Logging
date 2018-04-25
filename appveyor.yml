@@ -9,8 +9,8 @@ build_script:
   - dotnet build .\src
 
 # tests config
-test:
-  - dotnet test .\src\*.Tests
+test_script:
+  - ps: dotnet test ((ls .\src\**\*.Tests.csproj | % FullName))
 
 # pack config
 after_test:
