@@ -1,13 +1,20 @@
+image: Visual Studio 2017
+configuration: Release
 branches:
   only:
     - master
 
 # build config
 build_script:
-  - ps: .\build.ps1 -target pack
+  - dotnet build .\src
 
 # tests config
-test: off
+test:
+  - dotnet test .\src\*.Tests
+
+# pack config
+after_test:
+  - dotnet pack .\src
 
 # artifacts config
 artifacts:
