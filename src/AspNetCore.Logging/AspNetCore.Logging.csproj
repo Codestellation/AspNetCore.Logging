@@ -18,9 +18,9 @@
 
   <ItemGroup>
     <PackageReference Include="Codestellation.Cepheid" Version="0.1.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.1.1" />
   </ItemGroup>
 
 </Project>
