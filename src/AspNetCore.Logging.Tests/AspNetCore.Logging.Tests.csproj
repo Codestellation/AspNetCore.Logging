@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Codestellation.AspNetCore.Logging.Tests</AssemblyName>
     <RootNamespace>Codestellation.AspNetCore.Logging.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
