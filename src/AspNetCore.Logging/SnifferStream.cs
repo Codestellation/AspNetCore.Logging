@@ -19,35 +19,6 @@ namespace Codestellation.AspNetCore.Logging
             _sink = sink;
         }
 
-        public override void Flush()
-        {
-            _master.Flush();
-            _sink.Flush();
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            return _master.Seek(offset, origin);
-        }
-
-        public override void SetLength(long value)
-        {
-            _master.SetLength(value);
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            var bytesRead = _master.Read(buffer, offset, count);
-            _sink.Write(buffer, offset, bytesRead);
-            return bytesRead;
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            _master.Write(buffer, offset, count);
-            _sink.Write(buffer, offset, count);
-        }
-
         public override bool CanRead => _master.CanRead;
 
         public override bool CanSeek => _master.CanSeek;
@@ -60,6 +31,29 @@ namespace Codestellation.AspNetCore.Logging
         {
             get => _master.Position;
             set => _master.Position = value;
+        }
+
+        public override void Flush()
+        {
+            _master.Flush();
+            _sink.Flush();
+        }
+
+        public override long Seek(long offset, SeekOrigin origin) => _master.Seek(offset, origin);
+
+        public override void SetLength(long value) => _master.SetLength(value);
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int bytesRead = _master.Read(buffer, offset, count);
+            _sink.Write(buffer, offset, bytesRead);
+            return bytesRead;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            _master.Write(buffer, offset, count);
+            _sink.Write(buffer, offset, count);
         }
 
         public override void Close()

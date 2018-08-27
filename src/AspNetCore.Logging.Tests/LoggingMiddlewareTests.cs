@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,13 +12,14 @@ namespace Codestellation.AspNetCore.Logging.Tests
     [TestFixture]
     public class LoggingMiddlewareTests
     {
-        [Test, Description("See console output")]
+        [Test]
+        [Description("See console output")]
         public async Task Smoke()
         {
             // given
             var logger = new ConsoleLogger(nameof(LoggingMiddlewareTests), null, true);
 
-            var builder = new WebHostBuilder()
+            IWebHostBuilder builder = new WebHostBuilder()
                 .Configure(
                     app =>
                     {
@@ -26,16 +28,16 @@ namespace Codestellation.AspNetCore.Logging.Tests
                     });
 
             var server = new TestServer(builder);
-            var client = server.CreateClient();
+            HttpClient client = server.CreateClient();
             client.DefaultRequestHeaders.Add("X-MyHeader", "myValue");
 
             // when
-            var response = await client.GetAsync("/path?query=abc").ConfigureAwait(false);
+            HttpResponseMessage response = await client.GetAsync("/path?query=abc").ConfigureAwait(false);
 
             // than
             response.EnsureSuccessStatusCode();
 
-            var data = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            string data = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Assert.That(data, Is.EqualTo("Hello World!"));
         }
     }

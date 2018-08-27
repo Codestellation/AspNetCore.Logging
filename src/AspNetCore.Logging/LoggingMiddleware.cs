@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
+using Microsoft.Extensions.Primitives;
 
 namespace Codestellation.AspNetCore.Logging
 {
@@ -12,10 +14,10 @@ namespace Codestellation.AspNetCore.Logging
     {
         private static readonly Encoding Encoding = Encoding.UTF8;
 
+        private const int PoolSize = 8;
+
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
-
-        private const int PoolSize = 8;
         private readonly ObjectPool<StringBuilder> _stringBuilderPool;
         private readonly ObjectPool<MemoryStream> _streamPool;
 
@@ -53,7 +55,7 @@ namespace Codestellation.AspNetCore.Logging
             request.Body = Sniff(originRequestBody, requestBody);
             response.Body = Sniff(originResponseBody, responseBody);
 
-            var startedAt = DateTime.Now;
+            DateTime startedAt = DateTime.Now;
             try
             {
                 AppendRequestHeaders(request, output, startedAt); // log request's info before Next.Invoke() called, because HttpRequest may be disposed after
@@ -62,8 +64,8 @@ namespace Codestellation.AspNetCore.Logging
             }
             finally
             {
-                var finishedAt = DateTime.Now;
-                var elapsed = finishedAt - startedAt;
+                DateTime finishedAt = DateTime.Now;
+                TimeSpan elapsed = finishedAt - startedAt;
 
                 request.Body = originRequestBody;
                 response.Body = originResponseBody;
@@ -80,10 +82,7 @@ namespace Codestellation.AspNetCore.Logging
             }
         }
 
-        private static Stream Sniff(Stream master, Stream sink)
-        {
-            return new SnifferStream(master, sink);
-        }
+        private static Stream Sniff(Stream master, Stream sink) => new SnifferStream(master, sink);
 
         private void AppendRequestHeaders(HttpRequest request, StringBuilder output, DateTime startedAt)
         {
@@ -108,7 +107,7 @@ namespace Codestellation.AspNetCore.Logging
 
         private void AppendHeaders(IHeaderDictionary headers, StringBuilder output)
         {
-            foreach (var header in headers)
+            foreach (KeyValuePair<string, StringValues> header in headers)
             {
                 string name = header.Key;
                 string value = header.Value.ToString();
