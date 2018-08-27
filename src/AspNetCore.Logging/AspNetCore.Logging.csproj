@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/codestellation/aspnetcore.logging</RepositoryUrl>
     <AssemblyName>Codestellation.AspNetCore.Logging</AssemblyName>
     <RootNamespace>Codestellation.AspNetCore.Logging</RootNamespace>
-    <NoWarn>7035</NoWarn>
+    <NoWarn>7035;1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
