@@ -5,7 +5,7 @@
 [![Nuget Package](https://badgen.net/nuget/v/Codestellation.AspNetCore.Logging)](https://www.nuget.org/packages/Codestellation.AspNetCore.Logging/)
 
 # How to build
-```
+```bash
 # build
 dotnet build ./src -c=release
 
