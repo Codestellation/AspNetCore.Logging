@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Codestellation.AspNetCore.Logging.Masking;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 
 namespace Codestellation.AspNetCore.Logging
 {
@@ -111,6 +113,13 @@ namespace Codestellation.AspNetCore.Logging
             {
                 string name = header.Key;
                 string value = header.Value.ToString();
+
+                bool masking = name == HeaderNames.Authorization;
+                if (masking)
+                {
+                    value = Mask(value);
+                }
+
                 output.AppendLine($"{name}: {value}");
             }
         }
@@ -151,6 +160,12 @@ namespace Codestellation.AspNetCore.Logging
             output.AppendLine("Failed to read the body");
             output.AppendLine(error.ToString());
             output.AppendLine(disclaimer);
+        }
+
+        public static string Mask(string value)
+        {
+            uint mask = FNV1a.Hash(value);
+            return $"<FNV-1a:{mask}>";
         }
     }
 }

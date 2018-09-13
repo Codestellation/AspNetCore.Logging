@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,8 @@ namespace Codestellation.AspNetCore.Logging.Tests
             var server = new TestServer(builder);
             HttpClient client = server.CreateClient();
             client.DefaultRequestHeaders.Add("X-MyHeader", "myValue");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "dXNlcjpwYXNzd29yZAo=");
+            
 
             // when
             HttpResponseMessage response = await client.GetAsync("/path?query=abc").ConfigureAwait(false);
