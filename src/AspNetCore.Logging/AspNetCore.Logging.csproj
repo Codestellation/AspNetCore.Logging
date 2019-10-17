@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <Authors>Codestellation Team</Authors>
     <Company>Codestellation</Company>
-    <Description>ASP.NET core 2.0 logging middleware</Description>
-    <Copyright>Copyright (c) Codestellation 2017</Copyright>
+    <Description>ASP.NET Core 2.0/3.0 logging middleware</Description>
+    <Copyright>Copyright (c) Codestellation 2017-2019</Copyright>
     <PackageId>Codestellation.AspNetCore.Logging</PackageId>
     <PackageProjectUrl>https://github.com/codestellation/aspnetcore.logging</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codestellation/aspnetcore.logging</RepositoryUrl>
@@ -17,10 +17,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Codestellation.Cepheid" Version="0.1.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.1.1" />
+    <PackageReference Include="Codestellation.Cepheid" Version="0.1.6" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>
