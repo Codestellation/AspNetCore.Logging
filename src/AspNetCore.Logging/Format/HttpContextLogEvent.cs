@@ -7,7 +7,7 @@ namespace Codestellation.AspNetCore.Logging.Format
 {
     public class HttpContextLogEvent
     {
-        public DateTime StartedAt { get; set; }
+        public DateTime Timestamp { get; set; }
         public string Method { get; set; }
         public string Scheme { get; set; }
         public HostString Host { get; set; }

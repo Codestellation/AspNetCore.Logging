@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Codestellation.AspNetCore.Logging.IO;
@@ -35,7 +36,7 @@ namespace Codestellation.AspNetCore.Logging.Format
             builder.Append(':');
             builder.Append(logEvent.RemotePort);
             builder.Append(" at ");
-            builder.AppendFormat("{0:HH:mm:ss.fff}", logEvent.StartedAt);
+            builder.AppendFormat("{0:HH:mm:ss.fff}", logEvent.Timestamp);
             builder.AppendLine();
             AppendHeaders(builder, logEvent.RequestHeaders);
             AppendBody(builder, logEvent.RequestBody);

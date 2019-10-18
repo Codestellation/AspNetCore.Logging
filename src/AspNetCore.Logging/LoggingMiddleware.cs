@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Codestellation.AspNetCore.Logging.Format;
@@ -44,14 +45,14 @@ namespace Codestellation.AspNetCore.Logging
             request.Body = Sniff(originRequestBody, requestBody);
             response.Body = Sniff(originResponseBody, responseBody);
 
-            DateTime startedAt = DateTime.Now;
-
             var logEvent = new HttpContextLogEvent
             {
-                StartedAt = startedAt,
+                Timestamp = DateTime.Now,
                 RequestBody = requestBody,
                 ResponseBody = responseBody
             };
+
+            long startedAt = Stopwatch.GetTimestamp();
 
             try
             {
@@ -61,8 +62,9 @@ namespace Codestellation.AspNetCore.Logging
             }
             finally
             {
-                DateTime finishedAt = DateTime.Now;
-                logEvent.Elapsed = finishedAt - startedAt;
+                long finishedAt = Stopwatch.GetTimestamp();
+                double elapsed = finishedAt - startedAt;
+                logEvent.Elapsed = TimeSpan.FromSeconds(elapsed / Stopwatch.Frequency);
 
                 request.Body = originRequestBody;
                 response.Body = originResponseBody;
