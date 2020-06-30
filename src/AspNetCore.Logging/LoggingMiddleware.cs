@@ -14,7 +14,8 @@ namespace Codestellation.AspNetCore.Logging
     {
         private static readonly ArrayPool<byte> BufferPool = ArrayPool<byte>.Shared;
         private const int ChunkSize = 256;
-        private static readonly HttpContextLogEventFormatter Formatter = new HttpContextLogEventFormatter();
+        private static readonly ILogEventFormatter SimpleFormatter = new SimpleHttpLogEventFormatter();
+        private static readonly ILogEventFormatter FullFormatter = new FullLogEventFormatter();
 
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
@@ -33,11 +34,13 @@ namespace Codestellation.AspNetCore.Logging
                 return;
             }
 
+            bool useFull = _logger.IsEnabled(LogLevel.Debug);
+
             HttpRequest request = context.Request;
             HttpResponse response = context.Response;
 
-            var requestBody = new PooledMemoryStream(BufferPool, ChunkSize);
-            var responseBody = new PooledMemoryStream(BufferPool, ChunkSize);
+            Stream requestBody = GetSinkStream(useFull);
+            Stream responseBody = GetSinkStream(useFull);
 
             Stream originRequestBody = request.Body;
             Stream originResponseBody = response.Body;
@@ -71,13 +74,20 @@ namespace Codestellation.AspNetCore.Logging
 
                 LogResponse(response, logEvent);
 
-                string message = Formatter.Format(logEvent);
+                ILogEventFormatter formatter = GetFormatter(useFull);
+                string message = formatter.Format(logEvent);
                 _logger.LogInformation(message);
 
                 requestBody.Dispose();
                 responseBody.Dispose();
             }
         }
+
+        private static Stream GetSinkStream(bool useFull) => useFull
+            ? new PooledMemoryStream(BufferPool, ChunkSize)
+            : (Stream)new LengthCountingStream();
+
+        private static ILogEventFormatter GetFormatter(bool useFull) => useFull ? FullFormatter : SimpleFormatter;
 
         private static Stream Sniff(Stream master, Stream sink) => new SnifferStream(master, sink);
 

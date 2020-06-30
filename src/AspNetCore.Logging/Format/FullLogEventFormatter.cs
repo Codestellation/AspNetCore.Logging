@@ -9,7 +9,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace Codestellation.AspNetCore.Logging.Format
 {
-    public class HttpContextLogEventFormatter
+    public class FullLogEventFormatter : ILogEventFormatter
     {
         public string Format(HttpContextLogEvent logEvent)
         {
@@ -39,7 +39,7 @@ namespace Codestellation.AspNetCore.Logging.Format
             builder.AppendFormat("{0:HH:mm:ss.fff}", logEvent.Timestamp);
             builder.AppendLine();
             AppendHeaders(builder, logEvent.RequestHeaders);
-            AppendBody(builder, logEvent.RequestBody);
+            AppendBody(builder, logEvent.RequestBody as PooledMemoryStream);
         }
 
         private static void FormatResponse(StringBuilder builder, HttpContextLogEvent logEvent)
@@ -52,7 +52,7 @@ namespace Codestellation.AspNetCore.Logging.Format
             builder.AppendFormat("{0:000}", logEvent.Elapsed.Milliseconds);
             builder.AppendLine(" seconds");
             AppendHeaders(builder, logEvent.ResponseHeaders);
-            AppendBody(builder, logEvent.ResponseBody);
+            AppendBody(builder, logEvent.ResponseBody as PooledMemoryStream);
         }
 
         private static void AppendHeaders(StringBuilder builder, IHeaderDictionary headers)
@@ -76,6 +76,12 @@ namespace Codestellation.AspNetCore.Logging.Format
 
         private static void AppendBody(StringBuilder builder, PooledMemoryStream body)
         {
+            if (body == null)
+            {
+                builder.AppendLine("--- Can't read the body. This is not the part of the request or response. ---");
+                return;
+            }
+
             try
             {
                 string bodyText = body.GetString(Encoding.UTF8);

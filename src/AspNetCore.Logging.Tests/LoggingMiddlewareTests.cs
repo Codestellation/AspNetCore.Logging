@@ -17,10 +17,12 @@ namespace Codestellation.AspNetCore.Logging.Tests
     {
         [Test]
         [Description("See console output")]
-        public async Task Smoke()
+        [TestCase(LogLevel.Information)]
+        [TestCase(LogLevel.Debug)]
+        public async Task Smoke(LogLevel logLevel)
         {
             // given
-            ILoggerFactory loggerFactory = LoggerFactory.Create(b => b.AddConsole());
+            ILoggerFactory loggerFactory = LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(logLevel));
             ILogger logger = loggerFactory.CreateLogger<LoggingMiddlewareTests>();
             IWebHostBuilder builder = new WebHostBuilder()
                 .Configure(
