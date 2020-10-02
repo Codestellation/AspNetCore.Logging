@@ -26,6 +26,11 @@ namespace Codestellation.AspNetCore.Logging
             _logger = logger;
         }
 
+        public LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, string categoryName)
+            : this(next, loggerFactory.CreateLogger(categoryName))
+        {
+        }
+
         public async Task Invoke(HttpContext context)
         {
             if (!_logger.IsEnabled(LogLevel.Information))

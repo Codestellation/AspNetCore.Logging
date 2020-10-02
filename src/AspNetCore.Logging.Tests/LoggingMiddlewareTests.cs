@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
@@ -22,13 +23,15 @@ namespace Codestellation.AspNetCore.Logging.Tests
         public async Task Smoke(LogLevel logLevel)
         {
             // given
-            ILoggerFactory loggerFactory = LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(logLevel));
-            ILogger logger = loggerFactory.CreateLogger<LoggingMiddlewareTests>();
             IWebHostBuilder builder = new WebHostBuilder()
+                .ConfigureServices(s => s
+                    .AddLogging(l => l
+                        .AddConsole()
+                        .SetMinimumLevel(logLevel)))
                 .Configure(
                     app =>
                     {
-                        app.UseMiddleware<LoggingMiddleware>(logger);
+                        app.UseLoggingMiddleware("Requests");
                         app.Run(async context =>
                         {
                             await context.Request.Body.DrainAsync(CancellationToken.None).ConfigureAwait(false);
