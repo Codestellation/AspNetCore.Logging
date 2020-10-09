@@ -19,15 +19,18 @@ namespace Codestellation.AspNetCore.Logging
 
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+        private readonly Predicate<HttpContext> _shouldLog;
 
-        public LoggingMiddleware(RequestDelegate next, ILogger logger)
+
+        public LoggingMiddleware(RequestDelegate next, ILogger logger, PredicateContainer shouldLog)
         {
             _next = next;
             _logger = logger;
+            _shouldLog = shouldLog.Predicate;
         }
 
-        public LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, string categoryName)
-            : this(next, loggerFactory.CreateLogger(categoryName))
+        public LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, string categoryName, PredicateContainer shouldLog)
+            : this(next, loggerFactory.CreateLogger(categoryName), shouldLog)
         {
         }
 
@@ -53,12 +56,7 @@ namespace Codestellation.AspNetCore.Logging
             request.Body = Sniff(originRequestBody, requestBody);
             response.Body = Sniff(originResponseBody, responseBody);
 
-            var logEvent = new HttpContextLogEvent
-            {
-                Timestamp = DateTime.Now,
-                RequestBody = requestBody,
-                ResponseBody = responseBody
-            };
+            var logEvent = new HttpContextLogEvent {Timestamp = DateTime.Now, RequestBody = requestBody, ResponseBody = responseBody};
 
             long startedAt = Stopwatch.GetTimestamp();
 
@@ -70,18 +68,21 @@ namespace Codestellation.AspNetCore.Logging
             }
             finally
             {
-                long finishedAt = Stopwatch.GetTimestamp();
-                double elapsed = finishedAt - startedAt;
-                logEvent.Elapsed = TimeSpan.FromSeconds(elapsed / Stopwatch.Frequency);
-
                 request.Body = originRequestBody;
                 response.Body = originResponseBody;
 
                 LogResponse(response, logEvent);
+                //The check is put here to make it possible to evaluate response. If you need don't need response use UseWhen method of app builder
+                if (_shouldLog == null || _shouldLog.Invoke(context))
+                {
+                    long finishedAt = Stopwatch.GetTimestamp();
+                    double elapsed = finishedAt - startedAt;
+                    logEvent.Elapsed = TimeSpan.FromSeconds(elapsed / Stopwatch.Frequency);
 
-                ILogEventFormatter formatter = GetFormatter(useFull);
-                string message = formatter.Format(logEvent);
-                _logger.LogInformation(message);
+                    ILogEventFormatter formatter = GetFormatter(useFull);
+                    string message = formatter.Format(logEvent);
+                    _logger.LogInformation(message);
+                }
 
                 requestBody.Dispose();
                 responseBody.Dispose();
